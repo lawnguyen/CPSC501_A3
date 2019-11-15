@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serialized>
-  <object class="Object3" id="0">
-    <field name="nums" declaringclass="Object3">
+  <object class="Object1" id="1">
+    <field name="num" declaringclass="Object1">
+      <value>1</value>
+    </field>
+  </object>
+  <object class="Object1" id="2">
+    <field name="num" declaringclass="Object1">
+      <value>1</value>
+    </field>
+  </object>
+  <object class="Object1" id="3">
+    <field name="num" declaringclass="Object1">
+      <value>1</value>
+    </field>
+  </object>
+  <object class="Object4" id="0">
+    <field name="obj1s" declaringclass="Object4" length="3">
       <reference>1</reference>
+      <reference>2</reference>
+      <reference>3</reference>
     </field>
   </object>
 </serialized>

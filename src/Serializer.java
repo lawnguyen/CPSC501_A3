@@ -1,6 +1,7 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 
@@ -11,6 +12,7 @@ import org.jdom2.output.XMLOutputter;
 public class Serializer {
 	private Integer identifierNumber = 0;
 	IdentityHashMap<Object, Integer> ihm = new IdentityHashMap<Object, Integer>();
+	ArrayList<Object> serializedObjects = new ArrayList<Object>();
     
     public Document serialize(Object obj) {
     	
@@ -25,9 +27,10 @@ public class Serializer {
     
     private Document serializeObject(Object obj, Document doc) {
     	// Don't serialize the same object more than once
-//    	if (ihm.containsKey(obj)) {
-//    		return doc;
-//    	}
+    	if (serializedObjects.contains(obj)) {
+    		return doc;
+    	}
+    	serializedObjects.add(obj);
     	
     	Class c = obj.getClass();
     	
