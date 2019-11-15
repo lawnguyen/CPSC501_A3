@@ -33,12 +33,12 @@ public class Serializer {
     	serializedObjects.add(obj);
     	
     	Class c = obj.getClass();
-    	
+
 		// Create an object element
 		Element objectElement = new Element("object");
 		
 		// Set the object elements attributes
-		objectElement.setAttribute(new Attribute("class", c.getSimpleName()));
+		objectElement.setAttribute(new Attribute("class", c.getName()));
 		objectElement.setAttribute(new Attribute("id", getObjectId(obj).toString()));
 		if (c.isArray()) {
 			objectElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(obj))));
@@ -73,23 +73,33 @@ public class Serializer {
 		fields = Arrays.stream(fields).filter(x -> !Modifier.isStatic(x.getModifiers())).toArray(Field[]::new);
 		
 		for (int i = 0; i < fields.length; i++) {
+    		fields[i].setAccessible(true);
+			
 			// Create field element
 			Element fieldElement = new Element("field");
 			
 			// Set the field element's attributes
 			fieldElement.setAttribute(new Attribute("name", fields[i].getName()));	
-			fieldElement.setAttribute(new Attribute("declaringclass", fields[i].getDeclaringClass().getSimpleName()));
+			fieldElement.setAttribute(new Attribute("declaringclass", fields[i].getDeclaringClass().getName()));
 			
 			// Set the value
 			Element valueElement;
-    		fields[i].setAccessible(true);
     		Object fieldValue = null;
         	try {
         		fieldValue = fields[i].get(obj);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			if (fields[i].getType().isPrimitive()) {
+        	if (fieldValue == null) {
+				valueElement = new Element("value");
+				valueElement.setText("null");
+	        	
+				// Add value element to field element
+				fieldElement.addContent(valueElement);
+				
+				// Add field element to object element
+				objectElement.addContent(fieldElement);
+        	} else if (fields[i].getType().isPrimitive()) {
 				valueElement = new Element("value");
 				valueElement.setText(fieldValue.toString());
 	        	
@@ -114,14 +124,24 @@ public class Serializer {
 				} else {
 					// Field is an array object
 					for (int j = 0; j < Array.getLength(fieldValue); j++) {
-						valueElement = new Element("reference");
-						valueElement.setText(getObjectId(Array.get(fieldValue, j)).toString());
 						
-						// Add value element to field element
-						fieldElement.addContent(valueElement);
-						
-						// Recursively serialize the field object
-						serializeObject(Array.get(fieldValue, j), doc);
+						Object arrayObj = Array.get(fieldValue, j);
+						if (arrayObj == null) {
+							valueElement = new Element("value");
+							valueElement.setText("null");
+							
+							// Add value element to field element
+							fieldElement.addContent(valueElement);
+						} else {
+							valueElement = new Element("reference");
+							valueElement.setText(getObjectId(Array.get(fieldValue, j)).toString());
+							
+							// Add value element to field element
+							fieldElement.addContent(valueElement);
+							
+							// Recursively serialize the field object
+							serializeObject(Array.get(fieldValue, j), doc);	
+						}
 					}	
 				}
 

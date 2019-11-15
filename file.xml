@@ -2,17 +2,17 @@
 <serialized>
   <object class="Object1" id="1">
     <field name="num" declaringclass="Object1">
-      <value>1</value>
+      <value>42</value>
     </field>
   </object>
   <object class="Object1" id="2">
     <field name="num" declaringclass="Object1">
-      <value>1</value>
+      <value>777</value>
     </field>
   </object>
   <object class="Object1" id="3">
     <field name="num" declaringclass="Object1">
-      <value>1</value>
+      <value>88</value>
     </field>
   </object>
   <object class="Object4" id="0">
