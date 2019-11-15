@@ -25,6 +25,31 @@ public class Serializer {
 		// Set the object elements attributes
 		objectElement.setAttribute(new Attribute("class", c.getSimpleName()));
 		objectElement.setAttribute(new Attribute("id", getObjectId(obj).toString()));
+		if (c.isArray()) {
+			objectElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(obj))));
+			
+			// Set the value of array contents
+			for (int i = 0; i < Array.getLength(obj); i++) {
+				// Set the value
+				Element valueElement;
+	    		Object fieldValue = null;
+	        	try {
+	        		fieldValue = Array.get(obj, i);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				}
+				if (Array.get(obj, i).getClass().getComponentType().isPrimitive()) {
+					valueElement = new Element("value");
+		        	valueElement.setText(fieldValue.toString());
+				} else {
+					valueElement = new Element("reference");
+					valueElement.setText(getObjectId(fieldValue).toString());
+				}
+				
+				// Add value element to object element
+				objectElement.addContent(valueElement);
+			}
+		}
 		
 		
 		// Get fields
@@ -52,16 +77,26 @@ public class Serializer {
 			if (fields[i].getType().isPrimitive()) {
 				valueElement = new Element("value");
 	        	valueElement.setText(fieldValue.toString());
+	        	
+				// Add value element to field element
+				fieldElement.addContent(valueElement);
+				
+				// Add field element to object element
+				objectElement.addContent(fieldElement);
 			} else {
 				valueElement = new Element("reference");
 				valueElement.setText(getObjectId(fieldValue).toString());
+				
+				// Add value element to field element
+				fieldElement.addContent(valueElement);
+				
+				// Add field element to object element
+				objectElement.addContent(fieldElement);
+				
+				
 			}
 			
-			// Add value element to field element
-			fieldElement.addContent(valueElement);
-			
-			// Add field element to object element
-			objectElement.addContent(fieldElement);
+
 		}
 		
 		// Add the object element to the doc

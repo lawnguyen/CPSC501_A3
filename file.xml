@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serialized>
+  <object class="Object3" id="0">
+    <field name="nums" declaringclass="Object3">
+      <reference>1</reference>
+    </field>
+  </object>
+</serialized>
