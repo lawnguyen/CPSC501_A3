@@ -13,12 +13,24 @@ public class Serializer {
 	IdentityHashMap<Object, Integer> ihm = new IdentityHashMap<Object, Integer>();
     
     public Document serialize(Object obj) {
-    	Class c = obj.getClass();
     	
     	// Init document
 		Element root = new Element("serialized");
 		Document doc = new Document(root);
 		
+		Document serializedDoc = serializeObject(obj, doc);
+		
+		return serializedDoc;
+    }
+    
+    private Document serializeObject(Object obj, Document doc) {
+    	// Don't serialize the same object more than once
+//    	if (ihm.containsKey(obj)) {
+//    		return doc;
+//    	}
+    	
+    	Class c = obj.getClass();
+    	
 		// Create an object element
 		Element objectElement = new Element("object");
 		
@@ -28,29 +40,29 @@ public class Serializer {
 		if (c.isArray()) {
 			objectElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(obj))));
 			
-			// Set the value of array contents
-			for (int i = 0; i < Array.getLength(obj); i++) {
-				// Set the value
-				Element valueElement;
-	    		Object fieldValue = null;
-	        	try {
-	        		fieldValue = Array.get(obj, i);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				}
-				if (Array.get(obj, i).getClass().getComponentType().isPrimitive()) {
+			Element valueElement;
+			if (c.getComponentType().isPrimitive()) {
+				for (int i = 0; i < Array.getLength(obj); i++) {
 					valueElement = new Element("value");
-		        	valueElement.setText(fieldValue.toString());
-				} else {
-					valueElement = new Element("reference");
-					valueElement.setText(getObjectId(fieldValue).toString());
+					valueElement.setText(Array.get(obj, i).toString());
+					
+					// Add value element to field element
+					objectElement.addContent(valueElement);
 				}
-				
-				// Add value element to object element
-				objectElement.addContent(valueElement);
+			} else {
+				// Field is an array object
+				for (int i = 0; i < Array.getLength(obj); i++) {
+					valueElement = new Element("reference");
+					valueElement.setText(getObjectId(Array.get(obj, i)).toString());
+					
+					// Add value element to field element
+					objectElement.addContent(valueElement);
+					
+					// Recursively serialize the field object
+					serializeObject(Array.get(obj, i), doc);
+				}	
 			}
 		}
-		
 		
 		// Get fields
 		Field[] fields = c.getDeclaredFields();
@@ -76,13 +88,43 @@ public class Serializer {
 			}
 			if (fields[i].getType().isPrimitive()) {
 				valueElement = new Element("value");
-	        	valueElement.setText(fieldValue.toString());
+				valueElement.setText(fieldValue.toString());
 	        	
 				// Add value element to field element
 				fieldElement.addContent(valueElement);
 				
 				// Add field element to object element
 				objectElement.addContent(fieldElement);
+				
+			} else if (fieldValue.getClass().isArray()) {
+				// Add length attribute for arrays
+				fieldElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(fieldValue))));
+				
+				if (fieldValue.getClass().getComponentType().isPrimitive()) {
+					for (int j = 0; j < Array.getLength(fieldValue); j++) {
+						valueElement = new Element("value");
+						valueElement.setText(Array.get(fieldValue, j).toString());
+						
+						// Add value element to field element
+						fieldElement.addContent(valueElement);
+					}
+				} else {
+					// Field is an array object
+					for (int j = 0; j < Array.getLength(fieldValue); j++) {
+						valueElement = new Element("reference");
+						valueElement.setText(getObjectId(Array.get(fieldValue, j)).toString());
+						
+						// Add value element to field element
+						fieldElement.addContent(valueElement);
+						
+						// Recursively serialize the field object
+						serializeObject(Array.get(fieldValue, j), doc);
+					}	
+				}
+
+				// Add field element to object element
+				objectElement.addContent(fieldElement);
+				
 			} else {
 				valueElement = new Element("reference");
 				valueElement.setText(getObjectId(fieldValue).toString());
@@ -93,10 +135,9 @@ public class Serializer {
 				// Add field element to object element
 				objectElement.addContent(fieldElement);
 				
-				
+				// Recursively serialize the field object
+				serializeObject(fieldValue, doc);
 			}
-			
-
 		}
 		
 		// Add the object element to the doc
@@ -105,7 +146,7 @@ public class Serializer {
 		return doc;
     }
     
-    public Integer getObjectId(Object obj) {
+    private Integer getObjectId(Object obj) {
     	Integer id = ihm.get(obj);
     	if (id == null) {
     		ihm.put(obj, identifierNumber);
