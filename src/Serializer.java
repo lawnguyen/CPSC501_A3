@@ -34,47 +34,17 @@ public class Serializer {
     	
     	Class c = obj.getClass();
 
-		// Create an object element
-		Element objectElement = new Element("object");
+		Element objectElement = buildObjectElement(obj, doc, c);
 		
-		// Set the object elements attributes
-		objectElement.setAttribute(new Attribute("class", c.getName()));
-		objectElement.setAttribute(new Attribute("id", getObjectId(obj).toString()));
-		if (c.isArray()) {
-			objectElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(obj))));
-			
-			Element valueElement;
-			if (c.getComponentType().isPrimitive()) {
-				for (int i = 0; i < Array.getLength(obj); i++) {
-					valueElement = new Element("value");
-					valueElement.setText(Array.get(obj, i).toString());
-					
-					// Add value element to object element
-					objectElement.addContent(valueElement);
-				}
-			} else {
-				// Array object
-				for (int i = 0; i < Array.getLength(obj); i++) {
-					if (Array.get(obj, i) == null) {
-						valueElement = new Element("value");
-						valueElement.setText("null");
-						
-						// Add value element to object element
-						objectElement.addContent(valueElement);
-					} else {
-						valueElement = new Element("reference");
-						valueElement.setText(getObjectId(Array.get(obj, i)).toString());
-						
-						// Add value element to object element
-						objectElement.addContent(valueElement);
-						
-						// Recursively serialize the array object
-						serializeObject(Array.get(obj, i), doc);
-					}
-				}	
-			}
-		}
+		buildFieldElements(obj, doc, c, objectElement);
 		
+		// Add the object element to the doc
+		doc.getRootElement().addContent(objectElement);
+		
+		return doc;
+    }
+
+	private void buildFieldElements(Object obj, Document doc, Class c, Element objectElement) {
 		// Get fields
 		Field[] fields = c.getDeclaredFields();
 		// Filter out static fields
@@ -119,12 +89,51 @@ public class Serializer {
 				serializeObject(fieldValue, doc);
 			}
 		}
+	}
+
+	private Element buildObjectElement(Object obj, Document doc, Class c) {
+		// Create an object element
+		Element objectElement = new Element("object");
 		
-		// Add the object element to the doc
-		doc.getRootElement().addContent(objectElement);
-		
-		return doc;
-    }
+		// Set the object elements attributes
+		objectElement.setAttribute(new Attribute("class", c.getName()));
+		objectElement.setAttribute(new Attribute("id", getObjectId(obj).toString()));
+		if (c.isArray()) {
+			objectElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(obj))));
+			
+			Element valueElement;
+			if (c.getComponentType().isPrimitive()) {
+				for (int i = 0; i < Array.getLength(obj); i++) {
+					valueElement = new Element("value");
+					valueElement.setText(Array.get(obj, i).toString());
+					
+					// Add value element to object element
+					objectElement.addContent(valueElement);
+				}
+			} else {
+				// Array object
+				for (int i = 0; i < Array.getLength(obj); i++) {
+					if (Array.get(obj, i) == null) {
+						valueElement = new Element("value");
+						valueElement.setText("null");
+						
+						// Add value element to object element
+						objectElement.addContent(valueElement);
+					} else {
+						valueElement = new Element("reference");
+						valueElement.setText(getObjectId(Array.get(obj, i)).toString());
+						
+						// Add value element to object element
+						objectElement.addContent(valueElement);
+						
+						// Recursively serialize the array object
+						serializeObject(Array.get(obj, i), doc);
+					}
+				}	
+			}
+		}
+		return objectElement;
+	}
 
 	private void addFieldElementWithValue(Element parentElement, Element fieldElement, Element valueElement) {
 		// Add value element to field element
