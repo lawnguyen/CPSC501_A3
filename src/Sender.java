@@ -1,51 +1,56 @@
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-
+import java.util.Scanner;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 public class Sender {
 	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
 		Serializer serializer = new Serializer();
-		String serverUrl = "localhost";
-		int port = 4444;
+		String serverUrl;
+		int port;
 		
-//		try {
-//			Socket socket = new Socket(serverUrl, port);
-//			if (socket.isConnected()) {
-//				System.out.println("Connection has been established");
-//			}
+		// Get socket information
+		System.out.println("Enter the server URL of your receiver: ");
+		serverUrl = scanner.nextLine();
+		System.out.println("Enter the port number: ");
+		port = scanner.nextInt();
+		
+		// Create the object
+		ObjectCreator creator = new ObjectCreator(scanner);
+		Object obj = creator.createObject();
+		
+		try {
+			Socket socket = new Socket(serverUrl, port);
+			if (socket.isConnected()) {
+				System.out.println("\nConnection has been established");
+			}
 			
-//			Object1 obj1 = new Object1(4);
-//			Object2 obj2 = new Object2(4.20, new Object2b(new Object2()));
-//			Object3 obj3 = new Object3(new int[] { 1,2,3,4,5,6,7,8,9,0 });
-//			Object4 obj4 = new Object4(new Object1[] { new Object1(42), new Object1(777), new Object1(88) });
-//			ArrayList<Object1> al = new ArrayList<Object1>();
-//			al.add(new Object1(42)); 
-//			al.add(new Object1(777)); 
-//			al.add(new Object1(88));
-//			Object5 obj5 = new Object5(al);
+			// Serialize
+			Document doc = serializer.serialize(obj);
 			
-//			serializer.outputXml(serializer.serialize(obj1));
-//			serializer.outputXml(serializer.serialize(obj2));
-//			serializer.outputXml(serializer.serialize(obj3));
-//			serializer.outputXml(serializer.serialize(obj4));
-//			serializer.outputXml(serializer.serialize(obj5));
-			serializer.outputXml(serializer.serialize(new char[]{ 's','m','i','t','h' }));
+			// Show what will be sent
+			XMLOutputter xo = new XMLOutputter();
+			xo.setFormat(Format.getPrettyFormat());
+			System.out.println("\nThe following XML will be sent over the network:");
+			System.out.println(xo.outputString(doc));
 			
-//			ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-//			Document doc = serializer.serialize(obj3);
-//			outputStream.writeObject(doc);
-//
-//			outputStream.flush();
-//			socket.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+			// Send serialized object over network
+			ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+			outputStream.writeObject(doc);
+
+			outputStream.flush();
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

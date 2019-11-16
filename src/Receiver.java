@@ -19,10 +19,7 @@ public class Receiver {
 			Object obj = inputStream.readObject();
 			
 			Object deserialized = deserializer.deserialize((Document) obj);
-//			XMLOutputter xo = new XMLOutputter();
-//			xo.setFormat(Format.getCompactFormat());
-//			
-//			System.out.println(xo.outputString((Document) obj));
+
 			socket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
