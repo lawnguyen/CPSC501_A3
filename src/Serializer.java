@@ -102,30 +102,18 @@ public class Serializer {
 				valueElement = new Element("value");
 				valueElement.setText("null");
 	        	
-				// Add value element to field element
-				fieldElement.addContent(valueElement);
-				
-				// Add field element to object element
-				objectElement.addContent(fieldElement);
+				addFieldElementWithValue(objectElement, fieldElement, valueElement);
         	} else if (fields[i].getType().isPrimitive()) {
 				valueElement = new Element("value");
 				valueElement.setText(fieldValue.toString());
 	        	
-				// Add value element to field element
-				fieldElement.addContent(valueElement);
-				
-				// Add field element to object element
-				objectElement.addContent(fieldElement);
+				addFieldElementWithValue(objectElement, fieldElement, valueElement);
 				
 			} else {
 				valueElement = new Element("reference");
 				valueElement.setText(getObjectId(fieldValue).toString());
 				
-				// Add value element to field element
-				fieldElement.addContent(valueElement);
-				
-				// Add field element to object element
-				objectElement.addContent(fieldElement);
+				addFieldElementWithValue(objectElement, fieldElement, valueElement);
 				
 				// Recursively serialize the field object
 				serializeObject(fieldValue, doc);
@@ -137,6 +125,14 @@ public class Serializer {
 		
 		return doc;
     }
+
+	private void addFieldElementWithValue(Element parentElement, Element fieldElement, Element valueElement) {
+		// Add value element to field element
+		fieldElement.addContent(valueElement);
+		
+		// Add field element to object element
+		parentElement.addContent(fieldElement);
+	}
     
     private Integer getObjectId(Object obj) {
     	Integer id = ihm.get(obj);
