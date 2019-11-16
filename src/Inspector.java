@@ -88,7 +88,7 @@ public class Inspector {
         	try {
 				field = fields[i].get(obj);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
         	
         	if (field == null) {
