@@ -49,20 +49,28 @@ public class Serializer {
 					valueElement = new Element("value");
 					valueElement.setText(Array.get(obj, i).toString());
 					
-					// Add value element to field element
+					// Add value element to object element
 					objectElement.addContent(valueElement);
 				}
 			} else {
-				// Field is an array object
+				// Array object
 				for (int i = 0; i < Array.getLength(obj); i++) {
-					valueElement = new Element("reference");
-					valueElement.setText(getObjectId(Array.get(obj, i)).toString());
-					
-					// Add value element to field element
-					objectElement.addContent(valueElement);
-					
-					// Recursively serialize the field object
-					serializeObject(Array.get(obj, i), doc);
+					if (Array.get(obj, i) == null) {
+						valueElement = new Element("value");
+						valueElement.setText("null");
+						
+						// Add value element to object element
+						objectElement.addContent(valueElement);
+					} else {
+						valueElement = new Element("reference");
+						valueElement.setText(getObjectId(Array.get(obj, i)).toString());
+						
+						// Add value element to object element
+						objectElement.addContent(valueElement);
+						
+						// Recursively serialize the array object
+						serializeObject(Array.get(obj, i), doc);
+					}
 				}	
 			}
 		}
@@ -106,45 +114,6 @@ public class Serializer {
 				// Add value element to field element
 				fieldElement.addContent(valueElement);
 				
-				// Add field element to object element
-				objectElement.addContent(fieldElement);
-				
-			} else if (fieldValue.getClass().isArray()) {
-				// Add length attribute for arrays
-				fieldElement.setAttribute(new Attribute("length", Integer.toString(Array.getLength(fieldValue))));
-				
-				if (fieldValue.getClass().getComponentType().isPrimitive()) {
-					for (int j = 0; j < Array.getLength(fieldValue); j++) {
-						valueElement = new Element("value");
-						valueElement.setText(Array.get(fieldValue, j).toString());
-						
-						// Add value element to field element
-						fieldElement.addContent(valueElement);
-					}
-				} else {
-					// Field is an array object
-					for (int j = 0; j < Array.getLength(fieldValue); j++) {
-						
-						Object arrayObj = Array.get(fieldValue, j);
-						if (arrayObj == null) {
-							valueElement = new Element("value");
-							valueElement.setText("null");
-							
-							// Add value element to field element
-							fieldElement.addContent(valueElement);
-						} else {
-							valueElement = new Element("reference");
-							valueElement.setText(getObjectId(Array.get(fieldValue, j)).toString());
-							
-							// Add value element to field element
-							fieldElement.addContent(valueElement);
-							
-							// Recursively serialize the field object
-							serializeObject(Array.get(fieldValue, j), doc);	
-						}
-					}	
-				}
-
 				// Add field element to object element
 				objectElement.addContent(fieldElement);
 				

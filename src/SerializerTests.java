@@ -112,18 +112,21 @@ public class SerializerTests {
 			expected = new SAXBuilder().build(new StringReader(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 				"<serialized>\n" + 
+				"  <object class=\"[I\" id=\"1\" length=\"10\">\n" + 
+				"    <value>1</value>\n" + 
+				"    <value>2</value>\n" + 
+				"    <value>3</value>\n" + 
+				"    <value>4</value>\n" + 
+				"    <value>5</value>\n" + 
+				"    <value>6</value>\n" + 
+				"    <value>7</value>\n" + 
+				"    <value>8</value>\n" + 
+				"    <value>9</value>\n" + 
+				"    <value>0</value>\n" + 
+				"  </object>\n" + 
 				"  <object class=\"Object3\" id=\"0\">\n" + 
-				"    <field name=\"nums\" declaringclass=\"Object3\" length=\"10\">\n" + 
-				"      <value>1</value>\n" + 
-				"      <value>2</value>\n" + 
-				"      <value>3</value>\n" + 
-				"      <value>4</value>\n" + 
-				"      <value>5</value>\n" + 
-				"      <value>6</value>\n" + 
-				"      <value>7</value>\n" + 
-				"      <value>8</value>\n" + 
-				"      <value>9</value>\n" + 
-				"      <value>0</value>\n" + 
+				"    <field name=\"nums\" declaringclass=\"Object3\">\n" + 
+				"      <reference>1</reference>\n" + 
 				"    </field>\n" + 
 				"  </object>\n" + 
 				"</serialized>\n" + 
@@ -147,26 +150,29 @@ public class SerializerTests {
 			expected = new SAXBuilder().build(new StringReader(
 					"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 					"<serialized>\n" + 
-					"  <object class=\"Object1\" id=\"1\">\n" + 
+					"  <object class=\"Object1\" id=\"2\">\n" + 
 					"    <field name=\"num\" declaringclass=\"Object1\">\n" + 
 					"      <value>42</value>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
-					"  <object class=\"Object1\" id=\"2\">\n" + 
+					"  <object class=\"Object1\" id=\"3\">\n" + 
 					"    <field name=\"num\" declaringclass=\"Object1\">\n" + 
 					"      <value>777</value>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
-					"  <object class=\"Object1\" id=\"3\">\n" + 
+					"  <object class=\"Object1\" id=\"4\">\n" + 
 					"    <field name=\"num\" declaringclass=\"Object1\">\n" + 
 					"      <value>88</value>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
+					"  <object class=\"[LObject1;\" id=\"1\" length=\"3\">\n" + 
+					"    <reference>2</reference>\n" + 
+					"    <reference>3</reference>\n" + 
+					"    <reference>4</reference>\n" + 
+					"  </object>\n" + 
 					"  <object class=\"Object4\" id=\"0\">\n" + 
-					"    <field name=\"obj1s\" declaringclass=\"Object4\" length=\"3\">\n" + 
+					"    <field name=\"obj1s\" declaringclass=\"Object4\">\n" + 
 					"      <reference>1</reference>\n" + 
-					"      <reference>2</reference>\n" + 
-					"      <reference>3</reference>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
 					"</serialized>\n" + 
@@ -190,33 +196,36 @@ public class SerializerTests {
 			expected = new SAXBuilder().build(new StringReader(
 					"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
 					"<serialized>\n" + 
-					"  <object class=\"Object1\" id=\"2\">\n" + 
+					"  <object class=\"Object1\" id=\"3\">\n" + 
 					"    <field name=\"num\" declaringclass=\"Object1\">\n" + 
 					"      <value>42</value>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
-					"  <object class=\"Object1\" id=\"3\">\n" + 
+					"  <object class=\"Object1\" id=\"4\">\n" + 
 					"    <field name=\"num\" declaringclass=\"Object1\">\n" + 
 					"      <value>777</value>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
-					"  <object class=\"Object1\" id=\"4\">\n" + 
+					"  <object class=\"Object1\" id=\"5\">\n" + 
 					"    <field name=\"num\" declaringclass=\"Object1\">\n" + 
 					"      <value>88</value>\n" + 
 					"    </field>\n" + 
 					"  </object>\n" + 
+					"  <object class=\"[Ljava.lang.Object;\" id=\"2\" length=\"10\">\n" + 
+					"    <reference>3</reference>\n" + 
+					"    <reference>4</reference>\n" + 
+					"    <reference>5</reference>\n" + 
+					"    <value>null</value>\n" + 
+					"    <value>null</value>\n" + 
+					"    <value>null</value>\n" + 
+					"    <value>null</value>\n" + 
+					"    <value>null</value>\n" + 
+					"    <value>null</value>\n" + 
+					"    <value>null</value>\n" + 
+					"  </object>\n" + 
 					"  <object class=\"java.util.ArrayList\" id=\"1\">\n" + 
-					"    <field name=\"elementData\" declaringclass=\"java.util.ArrayList\" length=\"10\">\n" + 
+					"    <field name=\"elementData\" declaringclass=\"java.util.ArrayList\">\n" + 
 					"      <reference>2</reference>\n" + 
-					"      <reference>3</reference>\n" + 
-					"      <reference>4</reference>\n" + 
-					"      <value>null</value>\n" + 
-					"      <value>null</value>\n" + 
-					"      <value>null</value>\n" + 
-					"      <value>null</value>\n" + 
-					"      <value>null</value>\n" + 
-					"      <value>null</value>\n" + 
-					"      <value>null</value>\n" + 
 					"    </field>\n" + 
 					"    <field name=\"size\" declaringclass=\"java.util.ArrayList\">\n" + 
 					"      <value>3</value>\n" + 
