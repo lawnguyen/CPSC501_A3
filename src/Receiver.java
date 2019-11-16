@@ -18,13 +18,13 @@ public class Receiver {
 			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 			Object obj = inputStream.readObject();
 			
-//			deserializer.deserialize((Document) obj);
-			XMLOutputter xo = new XMLOutputter();
-			xo.setFormat(Format.getCompactFormat());
-			
-			System.out.println(xo.outputString((Document) obj));
+			Object deserialized = deserializer.deserialize((Document) obj);
+//			XMLOutputter xo = new XMLOutputter();
+//			xo.setFormat(Format.getCompactFormat());
+//			
+//			System.out.println(xo.outputString((Document) obj));
 			socket.close();
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
