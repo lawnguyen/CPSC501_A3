@@ -4,7 +4,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import org.jdom2.Document;
-import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 public class Receiver {
 	
@@ -17,11 +18,11 @@ public class Receiver {
 			ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 			Object obj = inputStream.readObject();
 			
-//	        SAXBuilder builder = new SAXBuilder();
-//	        Document doc = builder.build(obj);
-//			deserializer.deserialize(doc);
+//			deserializer.deserialize((Document) obj);
+			XMLOutputter xo = new XMLOutputter();
+			xo.setFormat(Format.getCompactFormat());
 			
-			System.out.println(obj.toString());
+			System.out.println(xo.outputString((Document) obj));
 			socket.close();
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
