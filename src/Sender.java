@@ -45,6 +45,7 @@ public class Sender {
 			// Send serialized object over network
 			ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
 			outputStream.writeObject(doc);
+			System.out.println("\nObject sent");
 
 			outputStream.flush();
 			socket.close();

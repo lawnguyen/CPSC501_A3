@@ -17,6 +17,7 @@ public class ObjectCreator {
 		System.out.println("6) Object6 - A five-digit character array");
 		System.out.println("Enter a digit between 1-6: ");
 		int objectChoice = scanner.nextInt();
+		scanner.nextLine();
 		
 		switch (objectChoice) {
 			case 1:
@@ -86,7 +87,8 @@ public class ObjectCreator {
 		char[] chars = new char[5];
 		for (int i = 0; i < chars.length; i++) {
 			System.out.println("\nEnter a single character for Object6[" + i + "]: ");
-			chars[i] = scanner.nextLine().charAt(0);
+			String c = scanner.nextLine();
+			chars[i] = c.charAt(0);
 		}
 		return chars;
 	}
